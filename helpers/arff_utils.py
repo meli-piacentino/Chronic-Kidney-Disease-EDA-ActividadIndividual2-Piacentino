@@ -1,6 +1,7 @@
 from pathlib import Path
 import math
 import csv
+import re
 
 
 def read_arff_header(file_path):
@@ -59,8 +60,7 @@ def find_inconsistent_rows(file_path, expected_fields=25):
 
     return inconsistent_rows
 
-from pathlib import Path
-import re
+
 
 
 def read_arff_attributes(file_path):
@@ -118,8 +118,7 @@ def read_arff_attributes(file_path):
     return attributes
 
 
-from pathlib import Path
-import csv
+
 
 
 def correct_arff_format_line_215_218_515(input_path, output_path, expected_fields=25):
