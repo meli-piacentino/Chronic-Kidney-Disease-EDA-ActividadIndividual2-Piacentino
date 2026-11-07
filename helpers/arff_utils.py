@@ -449,5 +449,47 @@ def validate_numeric_values(file_path):
     return inconsistencies
 
 
+def count_arff_records(file_path):
+    """
+    Cuenta los registros de un archivo ARFF y verifica
+    cuántos campos tiene cada registro.
 
+    Excluye líneas vacías y comentarios.
+
+    Returns:
+        dict: Cantidad de registros y cantidades de campos encontradas.
+    """
+    file_path = Path(file_path)
+
+    with open(file_path, "r", encoding="utf-8") as file:
+        lines = file.readlines()
+
+    # Buscar el inicio de los datos
+    data_index = next(
+        (
+            i for i, line in enumerate(lines)
+            if line.strip().lower() == "@data"
+        ),
+        None
+    )
+
+    if data_index is None:
+        raise ValueError("No se encontró la sección @data en el archivo.")
+
+    # Obtener los registros, excluyendo líneas vacías y comentarios
+    records = [
+        row
+        for row in csv.reader(lines[data_index + 1:])
+        if row
+        and any(value.strip() for value in row)
+        and not row[0].strip().startswith("%")
+    ]
+
+    # Calcular la cantidad de campos por registro
+    field_counts = {len(row) for row in records}
+
+    return {
+        "record_count": len(records),
+        "field_counts": field_counts
+    }
 
