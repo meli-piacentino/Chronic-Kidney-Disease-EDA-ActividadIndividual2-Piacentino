@@ -43,10 +43,20 @@ La variable objetivo (`class`) identifica la presencia o ausencia de enfermedad 
 chronic-kidney-disease-eda/
 │
 ├── data/
-│   └── chronic_kidney_disease_full.arff
+│   ├── raw/
+│   │   └── chronic_kidney_disease_full.arff
+│   │
+│   └── processed/
+│
+├── helpers/
+│   ├── __init__.py
+│   └── arff_utils.py
 │
 ├── notebooks/
-│   └── exploracion_inicial.ipynb
+│   └── 01_acondicionamiento_dataset.ipynb
+│
+├── .vscode/
+│   └── settings.json
 │
 ├── README.md
 ├── requirements.txt
