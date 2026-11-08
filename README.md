@@ -8,7 +8,7 @@ El trabajo se basa en el análisis de registros clínicos de pacientes evaluados
 
 El dataset contiene **400 registros y 25 variables**: 24 características clínicas y una variable objetivo. Incluye información demográfica, mediciones clínicas y resultados de análisis de laboratorio, con variables numéricas y categóricas.
 
-El objetivo del proyecto es realizar un análisis exploratorio de los datos (EDA), caracterizar las variables, evaluar la calidad de la información, identificar patrones y relaciones entre las características clínicas y la presencia de enfermedad renal crónica, y aplicar técnicas de visualización.
+El objetivo del proyecto es realizar un análisis exploratorio de los datos (EDA), caracterizar las variables, evaluar la calidad de la información, identificar patrones y aplicar técnicas de visualización.
 
 ## Dataset
 
@@ -37,31 +37,10 @@ La variable objetivo (`class`) identifica la presencia o ausencia de enfermedad 
 
 **Selección del archivo:** La descarga del dataset desde UCI ofrece distintos archivos. Luego de comparar los registros, se verificó que el archivo `chronic_kidney_disease_full.arff` contiene los mismos registros que el archivo común. Por este motivo, se seleccionó la versión completa en un único archivo para realizar el análisis.
 
-## Estructura del repositorio
+## Estructura del proyecto
 
-```text
-chronic-kidney-disease-eda/
-│
-├── data/
-│   ├── raw/
-│   │   └── chronic_kidney_disease_full.arff
-│   │
-│   └── processed/
-│
-├── helpers/
-│   ├── __init__.py
-│   └── arff_utils.py
-│
-├── notebooks/
-│   └── 01_acondicionamiento_dataset.ipynb
-│
-├── .vscode/
-│   └── settings.json
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
-```
+- **`helpers/`**: contiene las funciones auxiliares utilizadas para el procesamiento, análisis y visualización de los datos, facilitando la reutilización del código.
+- **`notebooks/`**: contiene los notebooks de Jupyter donde se desarrolla el análisis exploratorio de datos (EDA), incluyendo estadísticas descriptivas, visualizaciones y análisis de relaciones entre variables.
 
 ## Tecnologías y herramientas
 
@@ -111,18 +90,6 @@ python -m pip install -r requirements.txt
 ```
 
 5. Seleccionar el entorno virtual como intérprete de Python y kernel de Jupyter en VS Code.
-
-## Objetivos del análisis
-
-- Caracterizar el dataset mediante el análisis de sus dimensiones, variables y tipos de datos.
-- Explorar las distribuciones de las variables clínicas y de laboratorio.
-- Identificar valores faltantes, anomalías, inconsistencias y posibles outliers.
-- Analizar patrones y relaciones entre las variables y la presencia de enfermedad renal crónica.
-- Aplicar técnicas de visualización e interpretar los resultados.
-
-## Estado del proyecto
-
-En desarrollo.
 
 ---
 
