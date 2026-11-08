@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
 
 # FUNCIONES PARA VARIABLES NUMERICAS
 # Función para graficar
@@ -283,10 +284,12 @@ def plot_categorical_bar_distribution(
     show_values=True,
     show_percentages=False,
     order=None,
-    palette='pastel',
+    palette="pastel",
     title=None,
     xlabel=None,
-    ylabel='Cantidad'):
+    ylabel="Cantidad",
+    ax=None
+):
     """
     Genera un gráfico de barras con la distribución de frecuencias
     de una variable categórica.
@@ -303,6 +306,7 @@ def plot_categorical_bar_distribution(
         title: Título personalizado (opcional).
         xlabel: Etiqueta del eje X (opcional).
         ylabel: Etiqueta del eje Y (opcional).
+        ax: Eje de Matplotlib donde se dibujará el gráfico (opcional).
     """
 
     values = df[column].dropna()
@@ -313,7 +317,11 @@ def plot_categorical_bar_distribution(
     counts = values.value_counts().reindex(order, fill_value=0)
     percentages = counts / len(values) * 100
 
-    fig, ax = plt.subplots(figsize=(8, 5))
+    # Crear figura solo si no se proporciona un eje
+    show_figure = ax is None
+
+    if show_figure:
+        fig, ax = plt.subplots(figsize=(8, 5))
 
     sns.countplot(
         x=column,
@@ -330,34 +338,43 @@ def plot_categorical_bar_distribution(
             label = []
 
             if show_values:
-                label.append(f'{count}')
+                label.append(f"{count}")
 
             if show_percentages:
-                label.append(f'{percentages.iloc[i]:.1f}%')
+                label.append(f"{percentages.iloc[i]:.1f}%")
 
             ax.text(
                 i,
                 count,
-                '\n'.join(label),
-                ha='center',
-                va='bottom'
+                "\n".join(label),
+                ha="center",
+                va="bottom"
             )
 
-    ax.set_title(title if title else f'Distribución de {column}')
+    ax.set_title(title if title else f"Distribución de {column}")
     ax.set_xlabel(xlabel if xlabel else column)
     ax.set_ylabel(ylabel)
 
-    plt.tight_layout()
-    plt.show()
+    # Mostrar figura solo si la función la creó
+    if show_figure:
+        plt.tight_layout()
+        plt.show()
+
+    return ax
+
+
 
 def plot_categorical_pie(
     df,
     column,
     show_values=False,
     show_percentages=True,
-    palette='pastel',
+    palette="pastel",
     startangle=90,
-    title=None):
+    title=None,
+    order=None,
+    ax=None
+):
     """
     Genera un gráfico de torta para visualizar la proporción
     de cada categoría de una variable.
@@ -370,9 +387,20 @@ def plot_categorical_pie(
         palette: Paleta de colores del gráfico.
         startangle: Ángulo inicial del gráfico.
         title: Título personalizado (opcional).
+        order: Orden personalizado de las categorías (opcional).
+        ax: Eje de Matplotlib donde se dibujará el gráfico (opcional).
     """
 
-    counts = df[column].dropna().value_counts()
+    values = df[column].dropna()
+
+    if order is None:
+        if isinstance(values.dtype, pd.CategoricalDtype) and values.dtype.ordered:
+            order = values.cat.categories.tolist()
+        else:
+            order = values.value_counts().index.tolist()
+
+    counts = values.value_counts().reindex(order, fill_value=0)
+    counts = counts[counts > 0]
 
     colors = sns.color_palette(palette, n_colors=len(counts))
 
@@ -380,15 +408,19 @@ def plot_categorical_pie(
         label = []
 
         if show_percentages:
-            label.append(f'{pct:.1f}%')
+            label.append(f"{pct:.1f}%")
 
         if show_values:
             count = int(round(pct / 100 * counts.sum()))
-            label.append(f'{count}')
+            label.append(f"{count}")
 
-        return '\n'.join(label)
+        return "\n".join(label)
 
-    fig, ax = plt.subplots(figsize=(7, 7))
+    # Crear figura solo si no se proporciona un eje
+    show_figure = ax is None
+
+    if show_figure:
+        fig, ax = plt.subplots(figsize=(7, 7))
 
     ax.pie(
         counts,
@@ -398,75 +430,13 @@ def plot_categorical_pie(
         startangle=startangle
     )
 
-    ax.set_title(title if title else f'Distribución de {column}')
+    ax.set_title(title if title else f"Distribución de {column}")
 
-    plt.tight_layout()
-    plt.show()
+    ax.axis("equal")
 
-def plot_relative_frequencies(
-    df,
-    column,
-    show_percentages=True,
-    show_values=False,
-    order=None,
-    palette='pastel',
-    title=None,
-    xlabel=None):
-    """
-    Genera un gráfico de barras con las frecuencias relativas
-    de una variable categórica.
+    # Mostrar figura solo si la función la creó
+    if show_figure:
+        plt.tight_layout()
+        plt.show()
 
-    Parámetros:
-        df: DataFrame que contiene los datos.
-        column: Nombre de la columna categórica.
-        show_percentages: Si es True, muestra los porcentajes.
-        show_values: Si es True, muestra las frecuencias absolutas.
-        order: Orden personalizado de las categorías (opcional).
-        palette: Paleta de colores del gráfico.
-        title: Título personalizado (opcional).
-        xlabel: Etiqueta del eje X (opcional).
-    """
-
-    values = df[column].dropna()
-
-    if order is None:
-        order = values.value_counts().index.tolist()
-
-    counts = values.value_counts().reindex(order, fill_value=0)
-    percentages = counts / len(values) * 100
-
-    fig, ax = plt.subplots(figsize=(8, 5))
-
-    sns.barplot(
-        x=counts.index,
-        y=percentages.values,
-        hue=counts.index,
-        palette=palette,
-        legend=False,
-        ax=ax
-    )
-
-    if show_percentages or show_values:
-        for i, (percentage, count) in enumerate(zip(percentages, counts)):
-            label = []
-
-            if show_percentages:
-                label.append(f'{percentage:.1f}%')
-
-            if show_values:
-                label.append(f'{count}')
-
-            ax.text(
-                i,
-                percentage,
-                '\n'.join(label),
-                ha='center',
-                va='bottom'
-            )
-
-    ax.set_title(title if title else f'Frecuencias relativas de {column}')
-    ax.set_xlabel(xlabel if xlabel else column)
-    ax.set_ylabel('Frecuencia relativa (%)')
-
-    plt.tight_layout()
-    plt.show()
+    return ax

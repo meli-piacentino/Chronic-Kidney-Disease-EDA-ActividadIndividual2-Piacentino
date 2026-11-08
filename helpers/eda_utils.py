@@ -152,3 +152,30 @@ def classify_kurtosis(value, tolerance=0.1):
     else:
         return "Aproximadamente Mesocúrtica"
 
+
+def calculate_shannon_entropy(df, column):
+    """
+    Calcula la entropía de Shannon de una variable categórica.
+
+    Parámetros:
+        df: DataFrame que contiene los datos.
+        column: Nombre de la columna categórica.
+
+    Retorna:
+        Entropía de Shannon y entropía normalizada.
+    """
+
+    values = df[column].dropna()
+    probabilities = values.value_counts(normalize=True)
+
+    entropy = -np.sum(probabilities * np.log2(probabilities))
+
+    n_categories = len(probabilities)
+
+    if n_categories > 1:
+        normalized_entropy = entropy / np.log2(n_categories)
+    else:
+        normalized_entropy = 0
+
+    return entropy, normalized_entropy
+
